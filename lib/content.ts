@@ -10,7 +10,6 @@ export const participantText = {
   trainingIntro: "練習階段會讓您熟悉播放流程與評分方式。練習評分不會納入正式分析。",
   formalReadyTitle: "正式測試準備",
   formalReadyBody: "如果您對評分方式沒有問題，接下來會開始正式測試。",
-  playPrompt: "請觀看影片",
   ratingPrompt: "請評估剛才影片的整體視覺品質",
   ratingHelp: "",
   saving: "儲存中...",

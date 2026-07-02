@@ -139,7 +139,6 @@ function Session({
         ) : null}
         {resumeNoticeDismissed && state.phase === "training_video" && currentTraining ? (
           <VideoScreen
-            prompt={`${participantText.playPrompt} (${state.trainingIndex + 1}/${training.length})`}
             videoPath={currentTraining.video_path}
             onStarted={() => setVideoTiming({ startedAt: new Date().toISOString(), endedAt: "" })}
             onEnded={() => {
@@ -166,7 +165,6 @@ function Session({
         ) : null}
         {resumeNoticeDismissed && state.phase === "formal_video" && currentFormal ? (
           <VideoScreen
-            prompt={`${participantText.playPrompt} (${state.formalIndex + 1}/${formal.length})`}
             videoPath={currentFormal.video_path}
             preloadPath={formal[state.formalIndex + 1]?.video_path}
             onStarted={() => setVideoTiming({ startedAt: new Date().toISOString(), endedAt: "" })}
@@ -224,13 +222,11 @@ function InfoScreen({
 function VideoScreen({
   videoPath,
   preloadPath,
-  prompt,
   onStarted,
   onEnded
 }: {
   videoPath: string;
   preloadPath?: string;
-  prompt: string;
   onStarted: () => void;
   onEnded: () => void;
 }) {
@@ -276,7 +272,6 @@ function VideoScreen({
           </button>
         ) : null}
       </div>
-      <div className="videoPrompt">{prompt}</div>
     </div>
   );
 }

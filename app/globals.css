@@ -190,13 +190,6 @@ button:disabled {
   font-size: 22px;
 }
 
-.videoPrompt {
-  margin-top: 14px;
-  color: var(--muted);
-  text-align: center;
-  font-size: 18px;
-}
-
 .ratingPanel {
   width: min(900px, 100%);
   background: var(--panel);
