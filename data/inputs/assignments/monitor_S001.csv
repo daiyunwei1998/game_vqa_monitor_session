@@ -1,0 +1,5 @@
+trial,video_id,video_path,condition,game,quality_level,duration_sec,notes
+1,pseudo_001,videos/formal/pseudo_001.mp4,q_high,pseudo_game,high,4,pseudo formal stimulus
+2,pseudo_002,videos/formal/pseudo_002.mp4,q_mid,pseudo_game,mid,4,pseudo formal stimulus
+3,pseudo_003,videos/formal/pseudo_003.mp4,q_low,pseudo_game,low,4,pseudo formal stimulus
+4,pseudo_004,videos/formal/pseudo_004.mp4,q_artifact,pseudo_game,artifact,4,pseudo formal stimulus

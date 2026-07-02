@@ -1,0 +1,4 @@
+training_trial,video_id,video_path,training_label,duration_sec,notes
+1,train_high,videos/training/train_high.mp4,high,4,pseudo training stimulus
+2,train_mid,videos/training/train_mid.mp4,mid,4,pseudo training stimulus
+3,train_low,videos/training/train_low.mp4,low,4,pseudo training stimulus

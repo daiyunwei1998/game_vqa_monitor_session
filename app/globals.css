@@ -1,0 +1,227 @@
+:root {
+  color-scheme: light;
+  --bg: #f6f7f9;
+  --panel: #ffffff;
+  --ink: #1b1f24;
+  --muted: #5b6472;
+  --line: #d8dee8;
+  --accent: #1463ff;
+  --accent-dark: #0c48bd;
+  --danger: #b42318;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Arial, "Microsoft JhengHei", "PingFang TC", sans-serif;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  border-radius: 6px;
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
+  min-height: 44px;
+  padding: 0 18px;
+  font-weight: 700;
+}
+
+button:hover {
+  background: var(--accent-dark);
+}
+
+button:disabled {
+  background: #a7b2c5;
+  cursor: not-allowed;
+}
+
+.setup {
+  max-width: 860px;
+  margin: 48px auto;
+  padding: 0 24px;
+}
+
+.setupPanel,
+.messagePanel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.setupGrid {
+  display: grid;
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.field span {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.field input,
+.field select {
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0 12px;
+  background: white;
+  color: var(--ink);
+}
+
+.error {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.sessionShell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.researchBar {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px;
+  background: #111827;
+  color: white;
+  font-size: 13px;
+}
+
+.researchBar div {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.stage {
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+}
+
+.participantPanel {
+  width: min(920px, 100%);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 38px;
+}
+
+.participantPanel h1 {
+  margin: 0 0 22px;
+  font-size: 34px;
+}
+
+.participantPanel p,
+.participantPanel li {
+  font-size: 22px;
+  line-height: 1.65;
+}
+
+.participantPanel ul {
+  padding-left: 1.3em;
+}
+
+.actionRow {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.videoStage {
+  width: min(1180px, 100%);
+}
+
+.videoFrame {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #05070d;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.videoFrame video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.playOverlay {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 180px;
+  min-height: 58px;
+  font-size: 22px;
+}
+
+.videoPrompt {
+  margin-top: 14px;
+  color: var(--muted);
+  text-align: center;
+  font-size: 18px;
+}
+
+.ratingPanel {
+  width: min(900px, 100%);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 42px;
+}
+
+.ratingPanel h1 {
+  margin: 0 0 10px;
+  font-size: 32px;
+}
+
+.ratingPanel p {
+  color: var(--muted);
+  font-size: 20px;
+}
+
+.slider {
+  width: 100%;
+  accent-color: var(--accent);
+  margin-top: 34px;
+}
+
+.scaleLabels {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-weight: 700;
+  margin-top: 8px;
+}
