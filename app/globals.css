@@ -1,13 +1,13 @@
 :root {
-  color-scheme: light;
-  --bg: #f6f7f9;
-  --panel: #ffffff;
-  --ink: #1b1f24;
-  --muted: #5b6472;
-  --line: #d8dee8;
-  --accent: #1463ff;
-  --accent-dark: #0c48bd;
-  --danger: #b42318;
+  color-scheme: dark;
+  --bg: #000000;
+  --panel: #000000;
+  --ink: #ffffff;
+  --muted: #c7ccd4;
+  --line: #343a46;
+  --accent: #ffffff;
+  --accent-dark: #d9dee8;
+  --danger: #ffb4a9;
 }
 
 * {
@@ -33,10 +33,10 @@ select {
 }
 
 button {
-  border: 0;
+  border: 1px solid #ffffff;
   border-radius: 6px;
-  background: var(--accent);
-  color: white;
+  background: #ffffff;
+  color: #000000;
   cursor: pointer;
   min-height: 44px;
   padding: 0 18px;
@@ -48,7 +48,9 @@ button:hover {
 }
 
 button:disabled {
-  background: #a7b2c5;
+  border-color: #6b7280;
+  background: #4b5563;
+  color: #d1d5db;
   cursor: not-allowed;
 }
 
@@ -88,7 +90,7 @@ button:disabled {
   border: 1px solid var(--line);
   border-radius: 6px;
   padding: 0 12px;
-  background: white;
+  background: #050505;
   color: var(--ink);
 }
 
@@ -109,8 +111,9 @@ button:disabled {
   align-items: center;
   justify-content: space-between;
   padding: 10px 18px;
-  background: #111827;
-  color: white;
+  background: #000000;
+  border-bottom: 1px solid var(--line);
+  color: #ffffff;
   font-size: 13px;
 }
 
@@ -164,7 +167,7 @@ button:disabled {
 .videoFrame {
   width: 100%;
   aspect-ratio: 16 / 9;
-  background: #05070d;
+  background: #000000;
   border-radius: 4px;
   overflow: hidden;
   position: relative;
@@ -214,7 +217,7 @@ button:disabled {
 
 .slider {
   width: 100%;
-  accent-color: var(--accent);
+  accent-color: #ffffff;
   margin-top: 34px;
 }
 
