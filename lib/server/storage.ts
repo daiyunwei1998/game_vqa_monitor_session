@@ -105,6 +105,7 @@ export async function createSession(subjectIdRaw: string, assignmentFile: string
   state: SessionState;
   training: TrainingStimulus[];
   formal: FormalStimulus[];
+  resumed: boolean;
 }> {
   const subjectId = sanitizeId(subjectIdRaw);
   const trainingFile = defaultTrainingFile;
@@ -117,7 +118,7 @@ export async function createSession(subjectIdRaw: string, assignmentFile: string
 
   const existing = await findIncompleteSession(subjectId);
   if (existing) {
-    return existing;
+    return { ...existing, resumed: true };
   }
 
   const sessionId = `monitor_session_${new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 14)}`;
@@ -151,7 +152,7 @@ export async function createSession(subjectIdRaw: string, assignmentFile: string
   await writeState(state);
   await appendEvent(state, { type: "session_started", assignmentFile, trainingFile });
 
-  return { state, training, formal };
+  return { state, training, formal, resumed: false };
 }
 
 export async function findIncompleteSession(subjectId: string): Promise<{

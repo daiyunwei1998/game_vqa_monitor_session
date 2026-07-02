@@ -8,6 +8,7 @@ type Runtime = {
   state: SessionState;
   training: TrainingStimulus[];
   formal: FormalStimulus[];
+  resumed: boolean;
 };
 
 export default function Home() {
@@ -42,7 +43,7 @@ export default function Home() {
       setError("error" in data ? data.error : "Failed to start.");
       return;
     }
-    setRuntime({ state: data.state, training: data.training, formal: data.formal });
+    setRuntime({ state: data.state, training: data.training, formal: data.formal, resumed: data.resumed });
   }
 
   if (runtime) {
@@ -90,6 +91,7 @@ function Session({
   const currentTraining = training[state.trainingIndex];
   const currentFormal = formal[state.formalIndex];
   const [videoTiming, setVideoTiming] = useState({ startedAt: "", endedAt: "" });
+  const [resumeNoticeDismissed, setResumeNoticeDismissed] = useState(!runtime.resumed);
 
   async function setPhase(phase: SessionState["phase"]) {
     const response = await fetch("/api/session/phase", {
@@ -112,24 +114,30 @@ function Session({
         <div>
           <span>Subject: {state.subjectId}</span>
           <span>Session: {state.sessionId}</span>
+          {runtime.resumed ? <span>Resumed unfinished session</span> : null}
           <span>Training: {state.lastCompletedTraining}/{training.length}</span>
           <span>Formal: {state.lastCompletedFormal}/{formal.length}</span>
         </div>
       </div>
       <section className="stage">
-        {state.phase === "instructions" ? (
+        {!resumeNoticeDismissed ? (
+          <InfoScreen title="偵測到未完成測試" button={participantText.next} onNext={() => setResumeNoticeDismissed(true)}>
+            <p>此受試者已有未完成的測試紀錄，系統將繼續上次進度。</p>
+          </InfoScreen>
+        ) : null}
+        {resumeNoticeDismissed && state.phase === "instructions" ? (
           <InfoScreen title={participantText.instructionTitle} button={participantText.next} onNext={() => setPhase("training_intro")}>
             {participantText.instructionParagraphs.map((paragraph) => (
               <p key={paragraph}>{paragraph}</p>
             ))}
           </InfoScreen>
         ) : null}
-        {state.phase === "training_intro" ? (
+        {resumeNoticeDismissed && state.phase === "training_intro" ? (
           <InfoScreen title={participantText.trainingTitle} button={participantText.startTraining} onNext={() => setPhase("training_video")}>
             <p>{participantText.trainingIntro}</p>
           </InfoScreen>
         ) : null}
-        {state.phase === "training_video" && currentTraining ? (
+        {resumeNoticeDismissed && state.phase === "training_video" && currentTraining ? (
           <VideoScreen
             prompt={`${participantText.playPrompt} (${state.trainingIndex + 1}/${training.length})`}
             videoPath={currentTraining.video_path}
@@ -140,7 +148,7 @@ function Session({
             }}
           />
         ) : null}
-        {state.phase === "training_rating" && currentTraining ? (
+        {resumeNoticeDismissed && state.phase === "training_rating" && currentTraining ? (
           <RatingScreen
             kind="training"
             subjectId={state.subjectId}
@@ -151,12 +159,12 @@ function Session({
             onSaved={onSaved}
           />
         ) : null}
-        {state.phase === "formal_ready" ? (
+        {resumeNoticeDismissed && state.phase === "formal_ready" ? (
           <InfoScreen title={participantText.formalReadyTitle} button={participantText.startFormal} onNext={() => setPhase("formal_video")}>
             <p>{participantText.formalReadyBody}</p>
           </InfoScreen>
         ) : null}
-        {state.phase === "formal_video" && currentFormal ? (
+        {resumeNoticeDismissed && state.phase === "formal_video" && currentFormal ? (
           <VideoScreen
             prompt={`${participantText.playPrompt} (${state.formalIndex + 1}/${formal.length})`}
             videoPath={currentFormal.video_path}
@@ -168,7 +176,7 @@ function Session({
             }}
           />
         ) : null}
-        {state.phase === "formal_rating" && currentFormal ? (
+        {resumeNoticeDismissed && state.phase === "formal_rating" && currentFormal ? (
           <RatingScreen
             kind="formal"
             subjectId={state.subjectId}
@@ -179,7 +187,7 @@ function Session({
             onSaved={onSaved}
           />
         ) : null}
-        {state.phase === "complete" ? (
+        {resumeNoticeDismissed && state.phase === "complete" ? (
           <InfoScreen title={participantText.completeTitle} button="" onNext={() => undefined}>
             <p>{participantText.completeBody}</p>
           </InfoScreen>

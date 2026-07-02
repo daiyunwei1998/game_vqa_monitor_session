@@ -44,6 +44,7 @@ export type SessionState = {
 export type StartSessionResponse = {
   subjectId: string;
   sessionId: string;
+  resumed: boolean;
   state: SessionState;
   training: TrainingStimulus[];
   formal: FormalStimulus[];
