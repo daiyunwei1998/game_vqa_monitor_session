@@ -92,6 +92,7 @@ function Session({
   const currentFormal = formal[state.formalIndex];
   const [videoTiming, setVideoTiming] = useState({ startedAt: "", endedAt: "" });
   const [resumeNoticeDismissed, setResumeNoticeDismissed] = useState(!runtime.resumed);
+  const isVideoPhase = state.phase === "training_video" || state.phase === "formal_video";
 
   async function setPhase(phase: SessionState["phase"]) {
     const response = await fetch("/api/session/phase", {
@@ -119,7 +120,7 @@ function Session({
           <span>Formal: {state.lastCompletedFormal}/{formal.length}</span>
         </div>
       </div>
-      <section className="stage">
+      <section className={`stage ${isVideoPhase ? "stageVideo" : ""}`}>
         {!resumeNoticeDismissed ? (
           <InfoScreen title="偵測到未完成測試" button={participantText.next} onNext={() => setResumeNoticeDismissed(true)}>
             <p>此受試者已有未完成的測試紀錄，系統將繼續上次進度。</p>
