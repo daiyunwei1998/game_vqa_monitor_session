@@ -114,24 +114,15 @@ button:disabled {
   z-index: 10;
 }
 
-.researchBar strong {
-  position: fixed;
-  top: 12px;
-  left: 12px;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  background: rgba(0, 0, 0, 0.72);
-  padding: 6px 8px;
-}
-
 .researchBar div {
   position: fixed;
   right: 12px;
   bottom: 12px;
   display: flex;
+  flex-direction: column;
   justify-content: flex-end;
+  align-items: flex-end;
   gap: 8px;
-  flex-wrap: wrap;
   max-width: min(760px, calc(100vw - 24px));
 }
 

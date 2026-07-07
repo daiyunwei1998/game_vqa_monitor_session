@@ -108,16 +108,16 @@ function Session({
     setRuntime({ ...runtime, state: nextState });
   }
 
+  const progressLabel = state.phase.startsWith("training")
+    ? `Training: ${state.lastCompletedTraining}/${training.length}`
+    : `Main: ${state.lastCompletedFormal}/${formal.length}`;
+
   return (
     <main className="sessionShell">
       <div className="researchBar">
-        <strong>Session</strong>
         <div>
           <span>Subject: {state.subjectId}</span>
-          <span>Session: {state.sessionId}</span>
-          {runtime.resumed ? <span>Resumed unfinished session</span> : null}
-          <span>Training: {state.lastCompletedTraining}/{training.length}</span>
-          <span>Formal: {state.lastCompletedFormal}/{formal.length}</span>
+          <span>{progressLabel}</span>
         </div>
       </div>
       <section className={`stage ${isVideoPhase ? "stageVideo" : ""}`}>
