@@ -398,7 +398,10 @@ function RatingScreen({
       />
       <div className="scaleLabels">
         {participantText.labels.map((label) => (
-          <span key={label}>{label}</span>
+          <span key={label.en}>
+            <span>{label.zh}</span>
+            <span className="scaleLabelEnglish">{label.en}</span>
+          </span>
         ))}
       </div>
       {error ? <p className="error">{error}</p> : null}

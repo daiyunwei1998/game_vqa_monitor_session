@@ -25,5 +25,11 @@ export const participantText = {
   resumeAfterRest: "休息完，繼續",
   completeTitle: "本次測試已完成",
   completeBody: "感謝您的參與。請通知研究人員。",
-  labels: ["很差", "差", "普通", "好", "非常好"]
+  labels: [
+    { zh: "很差", en: "Bad" },
+    { zh: "差", en: "Poor" },
+    { zh: "普通", en: "Fair" },
+    { zh: "好", en: "Good" },
+    { zh: "非常好", en: "Excellent" }
+  ]
 };

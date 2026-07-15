@@ -251,3 +251,14 @@ button:disabled {
   font-weight: 700;
   margin-top: 8px;
 }
+
+.scaleLabels > span {
+  display: grid;
+  gap: 4px;
+  text-align: center;
+}
+
+.scaleLabelEnglish {
+  font-size: 14px;
+  font-weight: 600;
+}
