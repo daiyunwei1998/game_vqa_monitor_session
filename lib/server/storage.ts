@@ -218,7 +218,8 @@ export async function saveRating(payload: RatingPayload): Promise<SessionState> 
     videoEndedAt: payload.videoEndedAt,
     ratingScreenShownAt: payload.ratingScreenShownAt,
     ratingSubmittedAt: payload.ratingSubmittedAt,
-    responseTimeMs: payload.responseTimeMs
+    responseTimeMs: payload.responseTimeMs,
+    takeBreakAfterSubmit: Boolean(payload.takeBreakAfterSubmit)
   });
 
   if (payload.kind === "training") {
@@ -278,13 +279,14 @@ async function upsertTrainingRating(state: SessionState, stimuli: TrainingStimul
     rating_screen_shown_at: payload.ratingScreenShownAt,
     rating_submitted_at: payload.ratingSubmittedAt,
     response_time_ms: payload.responseTimeMs,
+    break_requested_after_submit: Boolean(payload.takeBreakAfterSubmit),
     save_confirmed_at: now(),
     trial_status: "completed"
   };
   await writeDataFiles(fileBase, "trainingTrials", rows, row, "training_trial", [
     "subject_id", "session_id", "display", "training_trial", "video_id", "video_path", "rating_0_100",
     "video_started_at", "video_ended_at", "rating_screen_shown_at", "rating_submitted_at", "response_time_ms",
-    "save_confirmed_at", "trial_status"
+    "break_requested_after_submit", "save_confirmed_at", "trial_status"
   ]);
 }
 
@@ -306,13 +308,14 @@ async function upsertFormalRating(state: SessionState, stimuli: FormalStimulus[]
     rating_screen_shown_at: payload.ratingScreenShownAt,
     rating_submitted_at: payload.ratingSubmittedAt,
     response_time_ms: payload.responseTimeMs,
+    break_requested_after_submit: Boolean(payload.takeBreakAfterSubmit),
     save_confirmed_at: now(),
     trial_status: "completed"
   };
   await writeDataFiles(fileBase, "trials", rows, row, "trial", [
     "subject_id", "session_id", "display", "trial", "video_id", "video_path", "rating_0_100", "video_started_at",
-    "video_ended_at", "rating_screen_shown_at", "rating_submitted_at", "response_time_ms", "save_confirmed_at",
-    "trial_status"
+    "video_ended_at", "rating_screen_shown_at", "rating_submitted_at", "response_time_ms",
+    "break_requested_after_submit", "save_confirmed_at", "trial_status"
   ]);
 }
 

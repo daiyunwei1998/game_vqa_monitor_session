@@ -18,6 +18,11 @@ export const participantText = {
   startTraining: "開始練習",
   startFormal: "開始正式測試",
   submitRating: "送出評分",
+  submitAndContinue: "送出並繼續",
+  saveAndRest: "保存並休息",
+  restTitle: "休息中",
+  restBody: "準備好後，請按下方按鈕繼續下一段影片。",
+  resumeAfterRest: "休息完，繼續",
   completeTitle: "本次測試已完成",
   completeBody: "感謝您的參與。請通知研究人員。",
   labels: ["很差", "差", "普通", "好", "非常好"]

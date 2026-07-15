@@ -92,7 +92,9 @@ function Session({
   const currentFormal = formal[state.formalIndex];
   const [videoTiming, setVideoTiming] = useState({ startedAt: "", endedAt: "" });
   const [resumeNoticeDismissed, setResumeNoticeDismissed] = useState(!runtime.resumed);
-  const isVideoPhase = state.phase === "training_video" || state.phase === "formal_video";
+  const [restStartedAt, setRestStartedAt] = useState("");
+  const isResting = Boolean(restStartedAt);
+  const isVideoPhase = !isResting && (state.phase === "training_video" || state.phase === "formal_video");
 
   async function setPhase(phase: SessionState["phase"]) {
     const response = await fetch("/api/session/phase", {
@@ -104,8 +106,35 @@ function Session({
     setRuntime({ ...runtime, state: data.state });
   }
 
-  async function onSaved(nextState: SessionState) {
+  async function onSaved(nextState: SessionState, takeBreakAfterSubmit: boolean) {
     setRuntime({ ...runtime, state: nextState });
+    if (takeBreakAfterSubmit && nextState.status !== "complete") {
+      const startedAt = new Date().toISOString();
+      setRestStartedAt(startedAt);
+      void logRestEvent("started", startedAt);
+    }
+  }
+
+  async function logRestEvent(action: "started" | "ended", startedAt: string, endedAt?: string) {
+    await fetch("/api/session/rest", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        subjectId: state.subjectId,
+        sessionId: state.sessionId,
+        action,
+        restStartedAt: startedAt,
+        restEndedAt: endedAt,
+        restDurationMs: endedAt ? Date.parse(endedAt) - Date.parse(startedAt) : undefined
+      })
+    }).catch(() => undefined);
+  }
+
+  async function endRest() {
+    const startedAt = restStartedAt;
+    const endedAt = new Date().toISOString();
+    setRestStartedAt("");
+    await logRestEvent("ended", startedAt, endedAt);
   }
 
   const progressLabel = state.phase.startsWith("training")
@@ -126,19 +155,22 @@ function Session({
             <p>此受試者已有未完成的測試紀錄，系統將繼續上次進度。</p>
           </InfoScreen>
         ) : null}
-        {resumeNoticeDismissed && state.phase === "instructions" ? (
+        {isResting ? (
+          <RestScreen onNext={endRest} />
+        ) : null}
+        {!isResting && resumeNoticeDismissed && state.phase === "instructions" ? (
           <InfoScreen title={participantText.instructionTitle} button={participantText.next} onNext={() => setPhase("training_intro")}>
             {participantText.instructionParagraphs.map((paragraph) => (
               <p key={paragraph}>{paragraph}</p>
             ))}
           </InfoScreen>
         ) : null}
-        {resumeNoticeDismissed && state.phase === "training_intro" ? (
+        {!isResting && resumeNoticeDismissed && state.phase === "training_intro" ? (
           <InfoScreen title={participantText.trainingTitle} button={participantText.startTraining} onNext={() => setPhase("training_video")}>
             <p>{participantText.trainingIntro}</p>
           </InfoScreen>
         ) : null}
-        {resumeNoticeDismissed && state.phase === "training_video" && currentTraining ? (
+        {!isResting && resumeNoticeDismissed && state.phase === "training_video" && currentTraining ? (
           <VideoScreen
             videoPath={currentTraining.video_path}
             onStarted={() => setVideoTiming({ startedAt: new Date().toISOString(), endedAt: "" })}
@@ -156,15 +188,16 @@ function Session({
             trialNumber={currentTraining.training_trial}
             videoStartedAt={videoTiming.startedAt}
             videoEndedAt={videoTiming.endedAt}
+            canTakeBreak={true}
             onSaved={onSaved}
           />
         ) : null}
-        {resumeNoticeDismissed && state.phase === "formal_ready" ? (
+        {!isResting && resumeNoticeDismissed && state.phase === "formal_ready" ? (
           <InfoScreen title={participantText.formalReadyTitle} button={participantText.startFormal} onNext={() => setPhase("formal_video")}>
             <p>{participantText.formalReadyBody}</p>
           </InfoScreen>
         ) : null}
-        {resumeNoticeDismissed && state.phase === "formal_video" && currentFormal ? (
+        {!isResting && resumeNoticeDismissed && state.phase === "formal_video" && currentFormal ? (
           <VideoScreen
             videoPath={currentFormal.video_path}
             preloadPath={formal[state.formalIndex + 1]?.video_path}
@@ -183,16 +216,29 @@ function Session({
             trialNumber={currentFormal.trial}
             videoStartedAt={videoTiming.startedAt}
             videoEndedAt={videoTiming.endedAt}
+            canTakeBreak={state.formalIndex < formal.length - 1}
             onSaved={onSaved}
           />
         ) : null}
-        {resumeNoticeDismissed && state.phase === "complete" ? (
+        {!isResting && resumeNoticeDismissed && state.phase === "complete" ? (
           <InfoScreen title={participantText.completeTitle} button="" onNext={() => undefined}>
             <p>{participantText.completeBody}</p>
           </InfoScreen>
         ) : null}
       </section>
     </main>
+  );
+}
+
+function RestScreen({ onNext }: { onNext: () => void }) {
+  return (
+    <div className="participantPanel restPanel">
+      <h1>{participantText.restTitle}</h1>
+      <p>{participantText.restBody}</p>
+      <div className="actionRow">
+        <button onClick={onNext}>{participantText.resumeAfterRest}</button>
+      </div>
+    </div>
   );
 }
 
@@ -284,6 +330,7 @@ function RatingScreen({
   trialNumber,
   videoStartedAt,
   videoEndedAt,
+  canTakeBreak,
   onSaved
 }: {
   kind: "training" | "formal";
@@ -292,7 +339,8 @@ function RatingScreen({
   trialNumber: number;
   videoStartedAt: string;
   videoEndedAt: string;
-  onSaved: (state: SessionState) => void;
+  canTakeBreak: boolean;
+  onSaved: (state: SessionState, takeBreakAfterSubmit: boolean) => void;
 }) {
   const [rating, setRating] = useState(50);
   const [touched, setTouched] = useState(false);
@@ -300,7 +348,7 @@ function RatingScreen({
   const [error, setError] = useState("");
   const [shownAt] = useState(() => new Date().toISOString());
 
-  async function submit() {
+  async function submit(takeBreakAfterSubmit: boolean) {
     const submittedAt = new Date().toISOString();
     setSaving(true);
     setError("");
@@ -317,7 +365,8 @@ function RatingScreen({
         videoEndedAt,
         ratingScreenShownAt: shownAt,
         ratingSubmittedAt: submittedAt,
-        responseTimeMs: Date.parse(submittedAt) - Date.parse(shownAt)
+        responseTimeMs: Date.parse(submittedAt) - Date.parse(shownAt),
+        takeBreakAfterSubmit
       })
     });
     const data = (await response.json()) as { state?: SessionState; error?: string };
@@ -326,7 +375,7 @@ function RatingScreen({
       setError(data.error ?? "Save failed.");
       return;
     }
-    onSaved(data.state);
+    onSaved(data.state, takeBreakAfterSubmit);
   }
 
   return (
@@ -354,8 +403,13 @@ function RatingScreen({
       </div>
       {error ? <p className="error">{error}</p> : null}
       <div className="actionRow">
-        <button onClick={submit} disabled={!touched || saving}>
-          {saving ? participantText.saving : participantText.submitRating}
+        {canTakeBreak ? (
+          <button className="secondaryButton" onClick={() => submit(true)} disabled={!touched || saving}>
+            {saving ? participantText.saving : participantText.saveAndRest}
+          </button>
+        ) : null}
+        <button onClick={() => submit(false)} disabled={!touched || saving}>
+          {saving ? participantText.saving : participantText.submitAndContinue}
         </button>
       </div>
     </div>

@@ -61,4 +61,5 @@ export type RatingPayload = {
   ratingScreenShownAt: string;
   ratingSubmittedAt: string;
   responseTimeMs: number;
+  takeBreakAfterSubmit?: boolean;
 };

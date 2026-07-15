@@ -54,6 +54,15 @@ button:disabled {
   cursor: not-allowed;
 }
 
+.secondaryButton {
+  background: #000000;
+  color: #ffffff;
+}
+
+.secondaryButton:hover {
+  background: #1f2937;
+}
+
 .setup {
   max-width: 860px;
   margin: 48px auto;
@@ -156,6 +165,10 @@ button:disabled {
 .participantPanel h1 {
   margin: 0 0 22px;
   font-size: 34px;
+}
+
+.restPanel {
+  text-align: center;
 }
 
 .participantPanel p,
